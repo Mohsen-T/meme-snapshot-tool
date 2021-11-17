@@ -1,21 +1,40 @@
 const Web3 = require("web3");
+const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const env = require("./env");
 
-const nestManagerAbi = require("../../abis/nestManager.json");
-const stabilityPoolAbi = require("../../abis/stabilityPool.json");
-const erc20Abi = require("../../abis/erc20.json");
+const shibApi = require("../../abis/shibaAbi.json");
+const memeAbi = require("../../abis/memecoin.json");
 
-const RPC = env.RPC;
+//const RPC = env.RPC;
 
-const NEST_MANAGER = "0x2a5c62691596BFC7dc29F48918566Db5b4a36B34";
-const STABILITY_POOL = "";
-const WSGB = "0x02f0826ef6aD107Cfc861152B32B52fD11BaB9ED";
+const ETHER_MEM = "0x42dbBd5ae373FEA2FC320F62d44C058522Bb3758";
+const ETHER_SHIB = "0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE";
 
 let web3Client;
 
 const getWeb3 = () => {
   if (web3Client) return web3Client;
-  web3Client = new Web3(RPC);
+  const alchemyUrl = env.mainnet_wss_url;
+  if(alchemyUrl)
+    web3Client = createAlchemyWeb3(alchemyUrl, {maxRetries: 5, retryInterval:1000, retryJitter:1000});
+  else {
+    let url = env.quickNodeProvider;
+    console.log(url);
+    let options = {
+      timeout: 30000,
+      clientConfig: {
+        maxReceivedFrameSize: 100000000,
+        maxReceivedMessageSize: 100000000,
+      },
+      reconnect: {
+        auto: true,
+        delay: 5000,
+        maxAttempts: 15,
+        onTimeout: false,
+      },
+    };
+    web3Client = new Web3(url);
+  }
   return web3Client;
 };
 
@@ -28,16 +47,12 @@ const getWeb3DefaultBlock = (blockNumber) => {
   return web3Client;
 };
 
-const getNestManager = () => {
-  return new web3.eth.Contract(nestManagerAbi, NEST_MANAGER);
+const getWeb3Shiba = () => {
+  return new web3.eth.Contract(shibApi, ETHER_SHIB);
 };
 
-const getWsgb = () => {
-  return new web3.eth.Contract(erc20Abi, WSGB);
-};
-
-const getStabilityPool = () => {
-  return new web3.eth.Contract(stabilityPoolAbi, STABILITY_POOL);
+const getWeb3Meme = () => {
+  return new web3.eth.Contract(memeAbi, ETHER_MEM);
 };
 
 // Wrapper for Web3 callback
@@ -54,9 +69,8 @@ const promisify = (inner) =>
 
 module.exports = {
   getWeb3,
-  getNestManager,
-  getStabilityPool,
   getWeb3DefaultBlock,
-  getWsgb,
+  getWeb3Shiba,
+  getWeb3Meme,
   promisify,
 };

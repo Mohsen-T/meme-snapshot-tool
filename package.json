@@ -1,5 +1,5 @@
 {
-  "name": "snap-tool",
+  "name": "meme-snap-tool",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@alch/alchemy-web3": "^1.1.7",
+    "@truffle/hdwallet-provider": "^1.6.0",
     "bignumber.js": "^9.0.1",
     "cli-progress": "^3.9.1",
     "dotenv-safe": "^8.2.0",

@@ -1,6 +1,10 @@
 const { MongoClient } = require("mongodb");
 const dotnev = require("dotenv-safe");
-dotnev.config();
+dotnev.config(
+  {
+      allowEmptyValues: true
+  }
+);
 const MONGO_DB = process.env.MONGO_DB;
 
 let db;

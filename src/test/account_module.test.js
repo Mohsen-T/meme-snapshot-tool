@@ -5,13 +5,13 @@ const accountModule = require("../modules/account");
   const to = process.argv[3];
   const start = process.argv[4];
 
-  // let accounts = await accountModule.getAccounts(from, to);
-  // console.log(accounts);
+   //let accounts = await accountModule.getAccounts(from, to);
+   //console.log(accounts);
   
-  //let bal = await accountModule.getWBalance('0x49dc27AC94D93F1fef6f231D0DDb7336b4A0dd2C',from);
+  //let bal = await accountModule.getBalance('0xB1680024814a666412DcB21703Adcdd46df7d17E',13602868);
   //console.log(bal);
 
-  let bals = await accountModule.getBalances(from, to, start);
+  bals = await accountModule.getBalances(13601868, 13601868, 13601868);
   console.log(bals);
 
   process.exit(0);

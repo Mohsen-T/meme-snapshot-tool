@@ -1,9 +1,9 @@
-const { getWeb3, getWsgb, promisify } = require("../config/web3_conf");
+const { getWeb3 } = require("../config/web3_conf");
 
 const cache = require("../lib/cache");
 const web3 = getWeb3();
 
-const web3_wsgb = getWsgb();
+//const web3_shib = getWeb3Shiba();
 
 const splitBatch = (a) => {
   const batch_size = 50;

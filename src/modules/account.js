@@ -1,10 +1,10 @@
-const { getWeb3, getWsgb, promisify } = require("../config/web3_conf");
+const { getWeb3, getWeb3Shiba, promisify } = require("../config/web3_conf");
 const utils = require("../libs/utils");
 var constants = require("../config/constants");
 
 const blockModule = require("./block");
 const web3 = getWeb3();
-const web3_wsgb = getWsgb();
+const web3_shib = getWeb3Shiba();
 
 const latestBlockNumber = async () => {
   let latest =  parseInt(await promisify(cb => web3.eth.getBlockNumber(cb)));
@@ -22,8 +22,8 @@ const getWBalance = async (address, blockNumber = null) => {
   let latest =  await latestBlockNumber();
   if(latest<blockNumber || !blockNumber)
     blockNumber = latest;
-    const wsgbBalance = await web3_wsgb.methods.balanceOf(address).call({}, blockNumber);
-    const nbal = Number(utils.exponentTenToDecrease(wsgbBalance, constants.DIGITS,constants.DECIMAL));
+    const shibBalance = await web3_shib.methods.balanceOf(address).call({}, blockNumber);
+    const nbal = Number(utils.exponentTenToDecrease(shibBalance, constants.DIGITS,constants.DECIMAL));
     return nbal;
 }
 const getAccounts = async (from, to) => {
@@ -84,11 +84,11 @@ const getBalances = async (from, to, start) => {
   for (const account of accounts) {
      cb = () =>{
       return new Promise(async (resolve, reject) => {
-      let sgb = 0, wsgb = 0;
+      let eth = 0, shib = 0;
       //if(!accounts.map(it=>it.address).includes(a) && a)
-      sgb = await getBalance(account, start);
-      wsgb = await getWBalance(account, start);
-      bals.push({address:account, sgb:sgb, wsgb:wsgb});
+      eth = await getBalance(account, start);
+      shib = await getWBalance(account, start);
+      bals.push({address:account, eth:eth, shib:shib});
       resolve();
       });
     }

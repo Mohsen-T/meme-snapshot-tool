@@ -28,7 +28,7 @@ const updateSnapshotData = async (wallet, data, blockNumber) => {
     totalSgb: data.total,
     collateral: data.collateral,
     stakedInLiquidity: data.stakedInLiquidity,
-    wsgb: data.wsgb,
+    shib: data.shib,
     sgb: data.sgb,
   });
 };
