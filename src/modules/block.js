@@ -1,9 +1,24 @@
-const { getWeb3 } = require("../config/web3_conf");
-
+const { getWeb3, getWeb3Contract, promisify } = require("../config/web3_conf");
+const fetch = require("node-fetch");
 const cache = require("../lib/cache");
-const web3 = getWeb3();
 
-//const web3_shib = getWeb3Shiba();
+const web3 = getWeb3();
+const web3_contract = getWeb3Contract();
+
+const latestBlockNumber = async () => {
+  let latest =  parseInt(await promisify(cb => web3.eth.getBlockNumber(cb)));
+  return latest;
+}
+const earlistContractBlockNumber = async () => {
+  let contractAddr = web3_contract.options.address;
+  return await getFirstBlock(contractAddr);
+
+}
+getFirstBlock = async (address)=> {
+  let response = await fetch("https://api.etherscan.io/api?module=account&action=txlist&address=" + address + "&startblock=0&page=1&offset=100&sort=asc");
+  let data = await response.json();
+  return data.result[0].blockNumber;
+}
 
 const splitBatch = (a) => {
   const batch_size = 50;
@@ -99,4 +114,7 @@ const getBlockExt = async (blockNumber) => {
 
 module.exports = { 
     getBlockExt,
+    latestBlockNumber,
+    earlistContractBlockNumber,
+
 };

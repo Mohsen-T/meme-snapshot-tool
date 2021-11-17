@@ -47,7 +47,7 @@ const getWeb3DefaultBlock = (blockNumber) => {
   return web3Client;
 };
 
-const getWeb3Shiba = () => {
+const getWeb3Contract = () => {
   return new web3.eth.Contract(shibApi, ETHER_SHIB);
 };
 
@@ -70,7 +70,7 @@ const promisify = (inner) =>
 module.exports = {
   getWeb3,
   getWeb3DefaultBlock,
-  getWeb3Shiba,
+  getWeb3Contract,
   getWeb3Meme,
   promisify,
 };

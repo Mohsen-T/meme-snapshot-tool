@@ -1,17 +1,14 @@
-const { getWeb3, getWeb3Shiba, promisify } = require("../config/web3_conf");
+const { getWeb3, getWeb3Contract, promisify } = require("../config/web3_conf");
 const utils = require("../libs/utils");
 var constants = require("../config/constants");
 
 const blockModule = require("./block");
 const web3 = getWeb3();
-const web3_shib = getWeb3Shiba();
+const web3_contract = getWeb3Contract();
 
-const latestBlockNumber = async () => {
-  let latest =  parseInt(await promisify(cb => web3.eth.getBlockNumber(cb)));
-  return latest;
-}
+
 const getBalance = async (address, blockNumber = null) => {
-  let latest =  await latestBlockNumber();
+  let latest =  await blockModule.latestBlockNumber();
   if(latest<blockNumber || !blockNumber)
     blockNumber = latest;
   let bal = await promisify(callback => web3.eth.getBalance(address, blockNumber, callback));
@@ -19,17 +16,22 @@ const getBalance = async (address, blockNumber = null) => {
   return nbal;
 }
 const getWBalance = async (address, blockNumber = null) => {
-  let latest =  await latestBlockNumber();
+  let latest =  await blockModule.latestBlockNumber();
+  let earliest = await blockModule.earlistContractBlockNumber();
   if(latest<blockNumber || !blockNumber)
     blockNumber = latest;
-    const shibBalance = await web3_shib.methods.balanceOf(address).call({}, blockNumber);
-    const nbal = Number(utils.exponentTenToDecrease(shibBalance, constants.DIGITS,constants.DECIMAL));
-    return nbal;
+  blockNumber = blockNumber && blockNumber<earliest ? earliest : blockNumber;
+  const shibBalance = await web3_contract.methods.balanceOf(address).call({}, blockNumber);
+  const nbal = Number(utils.exponentTenToDecrease(shibBalance, constants.DIGITS,constants.DECIMAL));
+  return nbal;
 }
 const getAccounts = async (from, to) => {
-  let latest =  await latestBlockNumber();
+  let latest =  await blockModule.latestBlockNumber();
   if(latest < to || !to)
-    to = latest;  
+    to = latest;
+  if(from > to) {
+    let tmp = to; to = from; from = tmp;
+  }
   // create an indexed array 'from' from to 'to' : example: from:3/to:5=>[3,4,5]
   let blockNumbers = Array.from({length: to - from + 1}, (_, i) => i + parseInt(from));
   const accounts = [];
@@ -69,14 +71,17 @@ const getAccounts = async (from, to) => {
 
 
 const getBalances = async (from, to, start) => {
-  let latest =  await latestBlockNumber();
-  if(latest < to || !to)
-    to = latest;
-  start = !start ? to : start;
+  let latest =  await blockModule.latestBlockNumber();
+  let earliest = await blockModule.earlistContractBlockNumber();
+  if(from > to) {
+    let tmp = to; to = from; from = tmp;
+  }
+  from = (!from || from < earliest) ? earliest : (from > latest ? latest : from);
+  to = (!to || to < earliest) ? earliest : (to > latest ? latest : to);
+  start = (!start || start < earliest) ? earliest : (start > latest ? latest : start);
+ 
+  console.log(from, to, start)
 
-  // create an indexed array 'from' from to 'to' : example: from:3/to:5=>[3,4,5]
-  //let blockNumbers = Array.from({length: to - from + 1}, (_, i) => i + parseInt(from));
-  
   let accounts = await getAccounts(from, to);
   let bals = [];
   let promises = [];
