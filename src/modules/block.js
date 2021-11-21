@@ -1,6 +1,5 @@
 const { getWeb3, getWeb3Contract, promisify } = require("../config/web3_conf");
 const fetch = require("node-fetch");
-const cache = require("../lib/cache");
 
 const web3 = getWeb3();
 const web3_contract = getWeb3Contract();

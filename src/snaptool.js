@@ -1,5 +1,5 @@
 const { connectDb } = require("./db/db");
-const { createLogger, getLogger } = require("./libs/logger");
+const { createLogger} = require("./libs/logger");
 const cache = require("./libs/cache");
 
 const accountHandler = require("./handlers/account");
@@ -22,15 +22,14 @@ const  snapHandler = require("./handlers/snapshot");
   const logger = createLogger();
 
   if(type == "account") {
-    const swBlock = process.argv[3];
-    const swAddr = process.argv[4];
-    console.log("Block number: ", swBlock);
-    console.log("Account: ", swAddr);
-    
-  } else if(type == "liquidity") {
-
-  } else if(type == "snapshot") {
-
+    const startBlock = process.argv[3];
+    const blockHeight = process.argv[4];
+    let order = process.argv[5];
+    await accountHandler.fetchAccounts(startBlock, blockHeight);
+  } else if(type == "balance") {
+    console.log("Make sure that account command has been run before doing this.");
+    const startBlock = process.argv[3];
+    await accountHandler.fetchBalances(startBlock);
   } else {
     throw new Error("Invalid arguments");
   }

@@ -2,7 +2,7 @@ const Web3 = require("web3");
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const env = require("./env");
 
-const shibApi = require("../../abis/shibaAbi.json");
+const contractAbi = require("../../abis/shibaAbi.json");
 const memeAbi = require("../../abis/memecoin.json");
 
 //const RPC = env.RPC;
@@ -33,7 +33,7 @@ const getWeb3 = () => {
         onTimeout: false,
       },
     };
-    web3Client = new Web3(url);
+    web3Client = new Web3(url, options);
   }
   return web3Client;
 };
@@ -48,7 +48,7 @@ const getWeb3DefaultBlock = (blockNumber) => {
 };
 
 const getWeb3Contract = () => {
-  return new web3.eth.Contract(shibApi, ETHER_SHIB);
+  return new web3.eth.Contract(contractAbi, ETHER_SHIB);
 };
 
 const getWeb3Meme = () => {

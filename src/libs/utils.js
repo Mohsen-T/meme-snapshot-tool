@@ -34,9 +34,17 @@ const createChunks = (data, chSize) => {
 
   return chunks;
 };
-
+const orderToArray = (from, to) => {
+	let res = [];
+  if(from <= to)
+  	res = Array.from({length: to - from + 1}, (_, i) => i + parseInt(from));
+  else
+  	res = Array.from({length: from - to + 1}, (_, i) => parseInt(from) -i);
+  return res;
+}
 module.exports = { 
   exponentTenToDecrease, 
   exponentTenToIncrease,
   createChunks,
+  orderToArray,
 };

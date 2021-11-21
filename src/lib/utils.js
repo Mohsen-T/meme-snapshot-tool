@@ -26,4 +26,5 @@ const exponentTenToDecrease = (number, digits, decimals = -1) => {
   return outcome.valueOf();
 };
 
+
 module.exports = { exponentTenToDecrease, exponentTenToIncrease };

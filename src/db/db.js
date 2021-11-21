@@ -1,7 +1,6 @@
 const { MongoClient } = require("mongodb");
-const dotnev = require("dotenv-safe");
-dotnev.config();
-const MONGO_DB = process.env.MONGO_DB;
+const env = require("../config/env");
+const MONGO_DB = env.MONGO_DB;
 
 let db;
 

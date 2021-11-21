@@ -1,4 +1,5 @@
 const { getDb } = require("../db/db");
+const config = require("../config/env");
 let logs = [];
 let transactions = [];
 let accounts;
@@ -9,18 +10,21 @@ let transactionsCollection;
 let blocksCollection;
 let walletsCollection;
 let liquidityCollection;
-let blockNumber;
 
-const init = (block) => {
-  db = getDb().db("snap");
+let accountsCollection;
+let balancesCollection;
+
+const init = () => {
+  db = getDb().db(config.DB_NAME);
   logsCollection = db.collection("logs");
   transactionsCollection = db.collection("transactions");
   blocksCollection = db.collection("blocks");
   walletsCollection = db.collection("wallets");
   liquidityCollection = db.collection("liquidity");
-  blockNumber = Number(block);
-};
 
+  accountsCollection = db.collection("accounts");
+  balancesCollection = db.collection("balances");
+};
 // #region Block parsing functions
 
 const saveDataForBlock = async (
@@ -157,7 +161,63 @@ const getLiqudityData = async () => {
   }
   return accounts;
 };
+/****
+********* New Functions ***********
+****/
+const getBlockNumbers = async () => {
+  //blocksCollection.find({ number: { $lte: blockNumber } })
+  let savedNumbers = await blocksCollection.find({}, {projection:{number:1, _id:0}}).toArray();
+  numbersArray = savedNumbers.map((b) => b.number);
+  return numbersArray;
+}
 
+const saveAccounts = async (accounts) => {
+  const savings = accounts.map((w) => ({ address: w}));
+    if (!savings.length) {
+      return;
+    }
+    await accountsCollection.insertMany(savings);
+}
+const saveBlockNumbers = async (blockNumbers) => {
+  const savings = blockNumbers.map((b) => ({ number: b }));
+    if (!savings.length) return;
+    await blocksCollection.insertMany(savings);
+}
+const saveBlockNumber = async (blockNumber) => {
+  
+  await blocksCollection.updateOne(
+    {
+      number: blockNumber //query, or {number: {$eq: blockNumber}}
+    }, 
+    {
+      $set: {number: blockNumber} //update
+    },
+    {
+      upsert: true,
+      multi: true
+    }
+  );
+}
+const getAccounts = async() => {
+  let saved = await accountsCollection.find({}, {projection:{address:1, _id:0}}).toArray();
+  let res = saved.map((b) => b.address);
+  return res;
+}
+
+const saveBalances = async(balances, blockNumber) => {
+  await balancesCollection.updateOne(
+    {
+      number: blockNumber //query, or {number: {$eq: blockNumber}}
+    }, 
+    {
+      $set: {balances: balances} //update
+    },
+    {
+      upsert: true,
+      multi: true
+    }
+  );
+}
 module.exports = {
   init,
   getLogs,
@@ -168,4 +228,11 @@ module.exports = {
   saveDataForBlock,
   getUnparsedBlocks,
   getLogsForEvents,
+
+  getBlockNumbers,
+  saveAccounts,
+  saveBlockNumbers,
+  saveBlockNumber,
+  getAccounts,
+  saveBalances,
 };
