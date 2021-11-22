@@ -1,3 +1,4 @@
+const constants = require("../config/constants");
 const cache = require("../libs/cache");
 const { getLogger } = require("../libs/logger");
 const utils = require("../libs/utils");
@@ -22,7 +23,7 @@ const fetchAccounts = async (startBlock, blockCount = 1) => {
             blockCount = - startBlock;
         }
     }
-    if(startBlock <= 1000) startBlock = 1000;
+    if(startBlock <= constants.LOWER_BLOCKNUMBER) startBlock = constants.LOWER_BLOCKNUMBER;
     
     fetchArray = utils.orderToArray(startBlock, startBlock + blockCount);
 
@@ -31,16 +32,27 @@ const fetchAccounts = async (startBlock, blockCount = 1) => {
     console.log("savedBlocks: ", savedBlocks);
     let realFetchArray = fetchArray.filter(x => !savedBlocks.includes(x));
     console.log("realFetchArray: ", realFetchArray);
-    try{
-        for(bk of realFetchArray) {
+    for(bk of realFetchArray) {
+        accounts = [];
+        try{
             console.log("- Block Number : %s => ", bk); // OR console.log(`- Block Number : ${bk} => `);
             accounts = await getAccounts(bk, bk);
-            console.log("   Accounts: ", accounts);
-            await cache.saveAccounts(accounts);
-            await cache.saveBlockNumber(bk);
+        } catch(err) {
+            console.log(`An error occurred on getAccounts(${bk}): waiting for ${constants.SLEEP_MS} ms` );
+            await utils.sleep(constants.SLEEP_MS);
+            console.log(`Re-trying....` );
+            try {
+                accounts = await getAccounts(bk, bk);
+            } catch (err) {
+                let waiting_more = constants.SLEEP_MS * 3;
+                console.log(`Re-trying failed: waiting for ${waiting_more} ms` );
+                await utils.sleep(waiting_more);
+                console.log(`Moving to next block number...` );
+            }
         }
-    }catch(err){
-        throw new Error(err.message);
+        console.log("   Accounts: ", accounts);
+        await cache.saveAccounts(accounts);
+        await cache.saveBlockNumber(bk);
     }
 }
 const fetchBalances = async (startBlock) => {

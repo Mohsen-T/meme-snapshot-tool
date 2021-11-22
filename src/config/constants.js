@@ -5,4 +5,6 @@ module.exports = Object.freeze({
     MAIN_SYMBOL: 'ETH',
     CONTRACT_SYMBOL_1: 'SHIB',
     CONTRACT_SYMBOL_2: 'MEME',
+    SLEEP_MS: 60000,
+    LOWER_BLOCKNUMBER: 1000,
 });

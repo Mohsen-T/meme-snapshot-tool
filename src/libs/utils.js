@@ -42,9 +42,15 @@ const orderToArray = (from, to) => {
   	res = Array.from({length: from - to + 1}, (_, i) => parseInt(from) -i);
   return res;
 }
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 module.exports = { 
   exponentTenToDecrease, 
   exponentTenToIncrease,
   createChunks,
   orderToArray,
+  sleep,
 };

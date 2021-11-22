@@ -172,11 +172,15 @@ const getBlockNumbers = async () => {
 }
 
 const saveAccounts = async (accounts) => {
-  const savings = accounts.map((w) => ({ address: w}));
-    if (!savings.length) {
+    if (!accounts.length) {
       return;
     }
-    await accountsCollection.insertMany(savings);
+    for(acc of accounts) {
+      exist = await accountsCollection.find({address: acc}).toArray();
+      if(exist.length > 0)
+        continue;
+      await accountsCollection.insertOne({address:acc});
+    }
 }
 const saveBlockNumbers = async (blockNumbers) => {
   const savings = blockNumbers.map((b) => ({ number: b }));
