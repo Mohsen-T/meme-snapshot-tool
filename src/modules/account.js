@@ -44,9 +44,9 @@ const getAccounts = async (from, to) => {
           resolve(blockData);
         }catch(err){
           //throw new Error(err.message);
-          //reject(err.message);
+          console.log("An Error while getting blockData from specific block number.");
           console.dir(err);
-          //resolve();
+          reject(err.message);
         }
       });
     }
