@@ -1,14 +1,27 @@
 {
-  "name": "meme-snap-tool",
+  "name": "meme-snapshot-tool",
   "version": "1.0.0",
-  "description": "",
+  "description": "Meme Snapshot Tool",
+  "author": "MohsenT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mohsen-T/meme-snapshot-tool.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "meme",
+    "snapshot"
+  ],
+  "files": [
+    "src/**/*.js",
+    "!src/**/test/**",
+    "abis/*.json",
+    "README.md"
+  ],
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@alch/alchemy-web3": "^1.1.7",
     "@truffle/hdwallet-provider": "^1.6.0",
